@@ -21,7 +21,9 @@ namespace Hospital
 
         public static Medico PedirMedico()
         {
-            return new Medico();
+            Personal personal = new Personal();
+
+            return new Medico(personal);
         }
 
         public static Personal PedirPersonal()
