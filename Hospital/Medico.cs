@@ -4,14 +4,12 @@ namespace Hospital
 {
     public class Medico : Personal
     {
-        private List<Paciente> pacientes;
-
         public Medico()
         {
             pacientes = new List<Paciente>();
         }
 
-        public Medico(int salario, int añoCotizados, int fechaDelAlta, string nombre, int edad, int dni, string letraDni) : base(salario, añoCotizados, fechaDelAlta, nombre, edad, dni, letraDni)
+        public Medico(int salario, int añoCotizados, int fechaDelAlta, string nombre, int edad, int dni, char letraDni) : base(salario, añoCotizados, fechaDelAlta, nombre, edad, dni, letraDni)
         {
             pacientes = new List<Paciente>();
         }
@@ -21,13 +19,14 @@ namespace Hospital
             pacientes = new List<Paciente>();
         }
 
+        public List<Paciente> Pacientes
+        {
+            get { return pacientes; }
+        }
+
         public override string ToString()
         {
-            string resultado = $@"{base.ToString()}
-Listado de los pacientes:";
-            foreach (var paciente in pacientes)
-                resultado += $"  -{paciente.ToString()} \n";
-            return resultado;
+            return base.ToString();
         }
     }
 }

@@ -1,10 +1,13 @@
-﻿namespace Hospital
+﻿using System.Collections.Generic;
+
+namespace Hospital
 {
     public class Personal : Persona
     {
         protected int salario;
         protected int añoCotizados;
         protected int fechaDelAlta;
+        protected List<Paciente> pacientes;
 
         public Personal()
         {
@@ -32,5 +35,6 @@
         public int Salario { get { return salario; } }
         public int AñoCotizados { get { return añoCotizados; } }
         public int FechaDelAlta { get { return fechaDelAlta; } }
+        public List<Paciente> Pacientes { get { return pacientes; } }
     }
 }
