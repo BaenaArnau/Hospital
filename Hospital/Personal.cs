@@ -7,7 +7,24 @@ namespace Hospital
         protected int salario;
         protected int añoCotizados;
         protected int fechaDelAlta;
-        protected List<Paciente> pacientes;
+
+        public int Salario
+        {
+            get { return salario; }
+            set { salario = value; }
+        }
+
+        public int AñoCotizados
+        {
+            get { return añoCotizados; }
+            set { añoCotizados = value; }
+        }
+
+        public int FechaDelAlta
+        {
+            get { return fechaDelAlta; }
+            set { fechaDelAlta = value; }
+        }
 
         public Personal()
         {
@@ -31,10 +48,5 @@ namespace Hospital
         {
             return $"{base.ToString()}, con salario:{salario} lleva trabajando{añoCotizados} y empezo a trabajar aqui el {fechaDelAlta}";
         }
-
-        public int Salario { get { return salario; } }
-        public int AñoCotizados { get { return añoCotizados; } }
-        public int FechaDelAlta { get { return fechaDelAlta; } }
-        public List<Paciente> Pacientes { get { return pacientes; } }
     }
 }

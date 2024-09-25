@@ -4,29 +4,36 @@ namespace Hospital
 {
     public class Medico : Personal
     {
+        protected List<Paciente> listaPacientes;
+        protected int numeroDePlanta;
+
+        public int NumeroDePlanta
+        {
+            get { return numeroDePlanta; }
+            set { numeroDePlanta = value; }
+        }
+        public List<Paciente> ListaPacientes { get { return ListaPacientes; } }
+
         public Medico()
         {
-            pacientes = new List<Paciente>();
+            listaPacientes = new List<Paciente>();
         }
 
-        public Medico(int salario, int añoCotizados, int fechaDelAlta, string nombre, int edad, int dni, char letraDni) : base(salario, añoCotizados, fechaDelAlta, nombre, edad, dni, letraDni)
+        public Medico(int numeroDePlanta, int salario, int añoCotizados, int fechaDelAlta, string nombre, int edad, int dni, char letraDni) : base(salario, añoCotizados, fechaDelAlta, nombre, edad, dni, letraDni)
         {
-            pacientes = new List<Paciente>();
+            this.numeroDePlanta = numeroDePlanta;
+            listaPacientes = new List<Paciente>();
         }
 
-        public Medico(Personal personal) : base(personal.Salario, personal.AñoCotizados, personal.FechaDelAlta, personal.Nombre, personal.Edad, personal.Dni, personal.LetraDni)
+        public Medico(int numeroDePlanta, Personal personal) : base(personal.Salario, personal.AñoCotizados, personal.FechaDelAlta, personal.Nombre, personal.Edad, personal.Dni, personal.LetraDni)
         {
-            pacientes = new List<Paciente>();
-        }
-
-        public List<Paciente> Pacientes
-        {
-            get { return pacientes; }
+            this.numeroDePlanta = numeroDePlanta;
+            listaPacientes = new List<Paciente>();
         }
 
         public override string ToString()
         {
-            return base.ToString();
+            return $"{base.ToString()}, trabajando el la planta {numeroDePlanta} del hospital";
         }
     }
 }

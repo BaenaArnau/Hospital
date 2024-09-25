@@ -7,6 +7,29 @@
         protected int dni;
         protected char letraDni;
 
+        public string Nombre { 
+            get { return nombre; }
+            set { nombre = value; }
+        }
+
+        public int Edad
+        {
+            get { return edad; }
+            set { edad = value; }
+        }
+
+        public int Dni
+        {
+            get { return dni; }
+            set { dni = value; }
+        }
+
+        public char LetraDni
+        {
+            get { return letraDni; }
+            set { letraDni = value; }
+        }
+
         public Persona()
         {
         }
@@ -23,10 +46,5 @@
         {
             return $"{nombre} con DNI:{dni}{letraDni} con {edad} años";
         }
-
-        public string Nombre { get { return nombre; } }
-        public int Edad { get { return edad; } }
-        public int Dni { get { return dni; } }
-        public char LetraDni { get {return letraDni;} }
     }
 }

@@ -3,6 +3,19 @@
     public class Paciente : Persona
     {
         protected string enfermedad;
+        protected Medico medicoDeCabecera;
+
+        public string Enfermedad
+        {
+            get { return enfermedad; }
+            set { enfermedad = value; }
+        }
+
+        public Medico MedicoDeCabecera
+        {
+            get { return medicoDeCabecera; }
+            set { medicoDeCabecera = value; }
+        }
 
         public Paciente()
         {
