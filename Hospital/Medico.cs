@@ -4,7 +4,7 @@ namespace Hospital
 {
     public class Medico : Personal
     {
-        protected List<Paciente> listaPacientes;
+        private List<Paciente> listaPacientes;
         protected int numeroDePlanta;
 
         public int NumeroDePlanta
@@ -12,7 +12,11 @@ namespace Hospital
             get { return numeroDePlanta; }
             set { numeroDePlanta = value; }
         }
-        public List<Paciente> ListaPacientes { get { return ListaPacientes; } }
+        public List<Paciente> ListaPacientes 
+        {
+            get { return listaPacientes ?? (listaPacientes = new List<Paciente>()); } // Asegurar que no sea null
+            set { listaPacientes = value ?? new List<Paciente>(); }
+        }
 
         public Medico()
         {

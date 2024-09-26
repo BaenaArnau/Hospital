@@ -8,12 +8,18 @@ namespace Hospital
     {
         public static List<Persona> personas = new List<Persona>();
 
+        /// <summary>
+        /// Metodo que permite dar de alta un medico
+        /// </summary>
         public static void DarDeAltaMedico()
         {
             personas.Add(PedirMedico());
             Console.WriteLine("Operacion terminada con exito");
         }
 
+        /// <summary>
+        /// Metodo que permite dar de alta un paciente
+        /// </summary>
         public static void DarDeAltaPaciente()
         {
             Paciente paciente = PedirPaciente();
@@ -27,7 +33,7 @@ namespace Hospital
 
                 if (medico != null)
                 {
-                    medico.ListaPacientes.Add(paciente);
+                    paciente.MedicoDeCabecera = medico;
                     personas.Add(paciente);
                     Console.WriteLine($"Paciente {paciente.Nombre} dado de alta con el doctor {medico.Nombre}.");
                     return;
@@ -37,12 +43,18 @@ namespace Hospital
             }
         }
 
+        /// <summary>
+        /// Metodo que permite dar de alta un administrativo
+        /// </summary>
         public static void DarDeAltaAdministrativo()
         {
             personas.Add(PedirAdministrativo());
             Console.WriteLine("Operacion terminada con exito");
         }
 
+        /// <summary>
+        /// Metodo que nos muestra en forma de lista los atributos de los medicos
+        /// </summary>
         public static void ListarMedicos()
         {
             Console.WriteLine("Lista de medicos: ");
@@ -52,6 +64,10 @@ namespace Hospital
             }
         }
 
+        /// <summary>
+        /// Metodo que nos lista una de pacientes de un medico especifico
+        /// </summary>
+        /// <param name="nombre">Variable que nos dira el nombre del medico</param>
         public static void ListarPacientes(string nombre)
         {
             Medico medico = personas.OfType<Medico>()
@@ -63,28 +79,31 @@ namespace Hospital
                     Console.WriteLine($"- {paciente.ToString()}");
                 return;
             }
-            
+
             Console.WriteLine("No se ha encontrado al doctor");
         }
 
-        public static void EliminarPaciente(string nombreDoctor, string nombrePaciente)
+        /// <summary>
+        /// Metodo que nos permite eliminar a un paciente de un doctor especifico
+        /// </summary>
+        /// <param name="nombrePaciente">Nombre del paciente a eliminar</param>
+        public static void EliminarPaciente(string nombrePaciente)
         {
-            Medico medico = personas.OfType<Medico>()
-                .FirstOrDefault(m => m.Nombre == nombreDoctor);
-            if (medico != null)
+            Paciente paciente = personas.OfType<Paciente>().FirstOrDefault(p => p.Nombre == nombrePaciente);
+
+            if (paciente != null)
             {
-                Paciente paciente = medico.ListaPacientes.FirstOrDefault(p => p.Nombre == nombrePaciente);
-                if (paciente != null)
-                {
-                    medico.ListaPacientes.Remove(paciente);
-                    personas.Remove(paciente);
-                    return;
-                }
+                paciente.MedicoDeCabecera = null;
+                personas.Remove(paciente);
+                return;
             }
 
             Console.WriteLine("No se a encontrado alguno de los nombres, vuelva a intentarlo");
         }
 
+        /// <summary>
+        /// Metodo que lista todas las personas que hay en el hospital
+        /// </summary>
         public static void ListaDePersonas()
         {
             Console.WriteLine("Lista de personas en el hospital: ");
@@ -92,6 +111,10 @@ namespace Hospital
                 persona.ToString();
         }
 
+        /// <summary>
+        /// Metodo que crea un administrativo con sus atributos
+        /// </summary>
+        /// <returns>Devuelve un administrativo</returns>
         public static Administrativo PedirAdministrativo()
         {
             Personal personal = PedirPersonal();
@@ -100,9 +123,13 @@ namespace Hospital
             Console.WriteLine("Escriba la contraseña del mail del administrativo");
             string contraseña = Console.ReadLine();
 
-            return new Administrativo(mail,contraseña, personal);
+            return new Administrativo(mail, contraseña, personal);
         }
 
+        /// <summary>
+        /// Metodo que crea un medico con sus atributos
+        /// </summary>
+        /// <returns>Devuelve un medico</returns>
         public static Medico PedirMedico()
         {
             Personal personal = PedirPersonal();
@@ -112,6 +139,10 @@ namespace Hospital
             return new Medico(numeroDePlanta, personal);
         }
 
+        /// <summary>
+        /// Metodo que crea una persona del personal con sus atributos
+        /// </summary>
+        /// <returns>Devuelve una persona del personal</returns>
         public static Personal PedirPersonal()
         {
             Persona persona = PedirPersona();
@@ -125,17 +156,21 @@ namespace Hospital
             return new Personal(salario, añoCotizados, fechaDelAlta, persona);
         }
 
+        /// <summary>
+        /// Metodo que crea un paciente con sus atributos
+        /// </summary>
+        /// <returns>Devuelve un peciente</returns>
         public static Paciente PedirPaciente()
         {
             Persona persona = PedirPersona();
-            string enfermedad;
-
-            Console.WriteLine("Que enfermedad tiene el paciente");
-            enfermedad = Console.ReadLine();
-
-            return new Paciente(enfermedad, persona);
+            Console.WriteLine("Escriba el historial del paciente");
+            return new Paciente(persona, PedirHistorial());
         }
 
+        /// <summary>
+        /// Metodo que crea una persona con sus atributos
+        /// </summary>
+        /// <returns>Devuelve una persona</returns>
         public static Persona PedirPersona()
         {
             string nombre = ToolKit.PedirNombre();
@@ -149,200 +184,122 @@ namespace Hospital
             return new Persona(nombre, edad, dni, letraDni);
         }
 
-        public static void ModificarPaciente()
-        {
-            switch (Menu.MenuOpcionesPaciente())
-            {
-                case 1:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("paciente"), 1);
-                    break;
-                case 2:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("paciente"), 2);
-                    break;
-                case 3:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("paciente"), 3);
-                    break;
-                case 4:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("paciente"), 4);
-                    break;
-                case 5:
-                    ModificarEnfermedad("paciente");
-                    Console.ReadKey();
-                    break;
-            }
-        }
-
-        public static void ModificarMedico()
-        {
-            switch (Menu.MenuOpcionesMedico())
-            {
-                case 1:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("medico"), 1);
-                    break;
-                case 2:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("medico"), 2);
-                    break;
-                case 3:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("medico"), 3);
-                    break;
-                case 4:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("medico"), 4);
-                    break;
-                case 5:
-                    ModificarAtributosPersonal("medico", 1);
-                    break;
-                case 6:
-                    ModificarAtributosPersonal("medico", 1);
-                    break;
-                case 7:
-                    ModificarAtributosPersonal("medico", 1);
-                    break;
-                case 8:
-                    ModificarNumeroDePlanta("medico");
-                    break;
-            }
-        }
-
-        public static void ModificarAdministrativo()
-        {
-            switch (Menu.MenuOpcionesAdministrativo())
-            {
-                case 1:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("administrativo"), 1);
-                    break;
-                case 2:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("administrativo"), 2);
-                    break;
-                case 3:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("administrativo"), 3);
-                    break;
-                case 4:
-                    ModificarAtributosPersona(ToolKit.PedirNombre("administrativo"), 4);
-                    break;
-                case 5:
-                    ModificarAtributosPersonal("administrativo", 1);
-                    break;
-                case 6:
-                    ModificarAtributosPersonal("administrativo", 2);
-                    break;
-                case 7:
-                    ModificarAtributosPersonal("administrativo", 3);
-                    break;
-                case 8:
-                    ModificarAtributosAdministrativo("administrativo" , 1);
-                    break;
-                case 9:
-                    ModificarAtributosAdministrativo("administrativo", 2);
-                    break;
-            }
-        }
-
+        /// <summary>
+        /// Metodo que nos permite modificar los atributos de una persona, para esto nos hace falta un nombre y la opcion que quiere modificar
+        /// </summary>
+        /// <param name="nombre">Variable que representa el nombre</param>
+        /// <param name="opcion">Variable que nos permite gestionar que opcion hay que ejecutar</param>
         public static void ModificarAtributosPersona(string nombre, int opcion)
         {
             Persona persona = personas.FirstOrDefault(p => p.Nombre == nombre);
-            switch (opcion)
+
+            if (persona != null)
             {
-                case 1:
-                    if (persona != null)
-                    {
+                switch (opcion)
+                {
+                    case 1:
                         persona.Nombre = ToolKit.PedirNombre();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 2:
-                    if (persona != null)
-                    {
+                    case 2:
                         Console.WriteLine("Introduzca el nuevo valor de edad");
                         persona.Edad = ToolKit.SacarEntero();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 3:
-                    if (persona != null)
-                    {
+                    case 3:
                         Console.WriteLine("Introduzca el nuevo valor del dni");
                         persona.Dni = ToolKit.SacarEntero();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 4:
-                    if (persona != null)
-                    {
+                    case 4:
                         Console.WriteLine("Introduzca el nuevo valor de letra del dni");
                         persona.LetraDni = ToolKit.SacarChar();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
+                }
             }
+            else
+                Console.WriteLine("El noombre que has pasado no se ha encontrado");
         }
 
+        /// <summary>
+        /// Metodo que nos permite modificar los atributos de una persona del persona, para esto nos hace falta un nombre y la opcion que quiere modificar
+        /// </summary>
+        /// <param name="nombre">Variable que representa el nombre</param>
+        /// <param name="opcion">Variable que nos permite gestionar que opcion hay que ejecutar</param>
         public static void ModificarAtributosPersonal(string nombre, int opcion)
         {
             Personal personal = personas.OfType<Personal>().FirstOrDefault(p => p.Nombre == nombre);
-            switch (opcion)
+
+            if (personal != null)
             {
-                case 1:
-                    
-                    if (personal != null)
-                    {
+                switch (opcion)
+                {
+                    case 1:
                         Console.WriteLine("Introduzca el nuevo valor del salario");
                         personal.Salario = ToolKit.SacarEntero();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 2:
-                    if (personal != null)
-                    {
+                    case 2:
                         Console.WriteLine("Introduzca el nuevo valor de los años cotizados");
                         personal.AñoCotizados = ToolKit.SacarEntero();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 3:
-                    if (personal != null)
-                    {
+                    case 3:
                         Console.WriteLine("Introduzca el nuevo valo de año en el que entro al hospital");
                         personal.FechaDelAlta = ToolKit.SacarEntero();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
+                }
             }
+            else
+                Console.WriteLine("El noombre que has pasado no se ha encontrado");
         }
 
-        public static void ModificarEnfermedad(string nombre)
+        /// <summary>
+        /// Metodo que nos permite modificar los atributos de un paciente, para esto nos hace falta un nombre y la opcion que quiere modificar
+        /// </summary>
+        /// <param name="nombre">Variable que representa el nombre</param>
+        /// <param name="opciones">Variable que nos permite gestionar que opcion hay que ejecutar</param>
+        public static void ModificarAtributosPaciente(string nombre, int opciones)
         {
             Paciente paciente = personas.OfType<Paciente>().FirstOrDefault(p => p.Nombre == nombre);
             if (paciente != null)
             {
-                Console.WriteLine("Escriba la nueva enfermedad");
-                paciente.Enfermedad = Console.ReadLine();
-                Console.WriteLine("Modificado con exito");
-            }
+                switch (opciones)
+                {
+                    case 1:
+                        Console.WriteLine("Escriba la nueva enfermedad");
+                        paciente.HistorialMedioco.Diagnosticos.Add(Console.ReadLine());
+                        Console.WriteLine("Modificado con exito");
+                        break;
+                    case 2:
+                        Console.WriteLine("Escriba el nombre del nuevo medico de cabecera");
+                        string nombreMedico = Console.ReadLine();
+                        Medico nuevoMedico = personas.OfType<Medico>()
+                            .FirstOrDefault(m => m.Nombre == nombreMedico);
+                        if (nuevoMedico != null)
+                        {
+                            paciente.MedicoDeCabecera = nuevoMedico;
+                            Console.WriteLine("Modificado con exito");
+                            break;
+                        }
 
-            Console.WriteLine("El noombre que has pasado no se ha encontrado");
+                        Console.WriteLine("No se ha encontrado el nuevo medico");
+                        break;
+                    case 3:
+                        ModificarAtributosHistorial(paciente);
+                        break;
+                }
+            }
+            else
+                Console.WriteLine("El noombre que has pasado no se ha encontrado");
         }
 
+        /// <summary>
+        /// Metodo que nos permite modificar el numero de planta donde trabaja un medico, para esto nos hace falta un nombre
+        /// </summary>
+        /// <param name="nombre">Variable que representa el nombre</param>
         public static void ModificarNumeroDePlanta(string nombre)
         {
             Medico medico = personas.OfType<Medico>().FirstOrDefault(p => p.Nombre == nombre);
@@ -356,32 +313,103 @@ namespace Hospital
             Console.WriteLine("El noombre que has pasado no se ha encontrado");
         }
 
+        /// <summary>
+        /// Metodo que nos permite modificar los atributos de un administrativo, para esto nos hace falta un nombre y la opcion que quiere modificar
+        /// </summary>
+        /// <param name="nombre">Variable que representa el nombre</param>
+        /// <param name="opciones">Variable que nos permite gestionar que opcion hay que ejecutar</param>
         public static void ModificarAtributosAdministrativo(string nombre, int opciones)
         {
             Administrativo administrativo = personas.OfType<Administrativo>().FirstOrDefault(p => p.Nombre == nombre);
-            switch (opciones)
+            if (administrativo != null)
             {
-                case 1:
-                    if (administrativo != null)
-                    {
+                switch (opciones)
+                {
+                    case 1:
                         Console.WriteLine("Escriba el nuevo correo");
                         administrativo.Mail = Console.ReadLine();
                         Console.WriteLine("Modificado con exito");
                         break;
-                    }
-
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
-                    break;
-                case 2:
-                    if (administrativo != null)
-                    {
+                    case 2:
                         Console.WriteLine("Escriba la nueva contraseña");
                         administrativo.Contraseña = Console.ReadLine();
                         Console.WriteLine("Modificado con exito");
                         break;
+                }
+            }
+            else
+                Console.WriteLine("El noombre que has pasado no se ha encontrado");
+        }
+
+        public static void ListarCitas(Paciente paciente)
+        {
+            Console.WriteLine($"Lista de las citas del paciente {paciente.Nombre}:");
+
+            foreach (var cita in paciente.HistorialMedioco.Citas)
+           
+                Console.WriteLine($"-  {cita.ToString()}");
+        }
+
+        public static Historial PedirHistorial()
+        {
+            return new Historial(ToolKit.PedirListaString("diagnostico"), ToolKit.PedirListaString("tratamiento"), ToolKit.PedirString("notas"));
+        }
+
+        public static void ModificarAtributosHistorial(Paciente paciente)
+        {
+            switch (Menu.MenuOpcionesCita())
+            {
+                case 1:
+                    ListarCitas(paciente);
+                    DateTime fecha1 = ToolKit.SacarDateTime();
+                    Cita cita1 = paciente.HistorialMedioco.Citas.FirstOrDefault(c => c.Medico == paciente.MedicoDeCabecera && c.Fecha == fecha1);
+                    if (cita1 == null)
+                    {
+                        paciente.HistorialMedioco.Citas.Add(new Cita(paciente, paciente.MedicoDeCabecera, fecha1));
+                        Console.WriteLine("Se ha añadido con exito la cita al calendario");
+                        break;
                     }
 
-                    Console.WriteLine("El noombre que has pasado no se ha encontrado");
+                    Console.WriteLine($"El doctor {paciente.MedicoDeCabecera.Nombre} ya tiene una cita para esa fecha");
+                    break;
+                case 2:
+                    ListarCitas(paciente);
+                    Console.WriteLine("Introduzca la fecha de la cita que quieres modificar");
+                    DateTime fechaActual = ToolKit.SacarDateTime();
+                    Cita cita2 = paciente.HistorialMedioco.Citas.FirstOrDefault(c => c.Paciente == paciente && c.Fecha == fechaActual);
+
+                    if (cita2 != null)
+                    {
+                        Console.WriteLine("Introduzca la nueva fecha para la cita");
+                        DateTime nuevaFecha = ToolKit.SacarDateTime();
+
+                        cita2.Fecha = nuevaFecha;
+                        Console.WriteLine("Fecha cambiada con exito");
+                        break;
+                    }
+
+                    Console.WriteLine("No hay planificada niguna cita con esa fecha");
+                    break;
+                case 3:
+                    ListarCitas(paciente);
+                    Console.WriteLine("Introduzca la fecha de la cita que quieres eliminar");
+                    DateTime fecha = ToolKit.SacarDateTime();
+                    Cita citaEliminar = paciente.HistorialMedioco.Citas.FirstOrDefault(c => c.Paciente == paciente && c.Fecha == fecha);
+
+                    if (citaEliminar != null)
+                    {
+                        paciente.HistorialMedioco.Citas.Remove(citaEliminar);
+                        Console.WriteLine("Cita eliminada con exit");
+                        break;
+                    }
+
+                    Console.WriteLine("No hay planificada niguna cita con esa fecha");
+                    break;
+                case 4:
+                    ListarCitas(paciente);
+                    Console.WriteLine("Introduzca un nuevo diagnostico");
+                    paciente.HistorialMedioco.Diagnosticos.Add(ToolKit.PedirString("diagnostico"));
+                    Console.WriteLine("Diagnostico añadido con exito");
                     break;
             }
         }
